@@ -1,0 +1,193 @@
+package com.nepu.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import com.nepu.dto.ArrangeInfo;
+import com.nepu.entity.Course;
+import com.nepu.entity.TurnPage;
+
+@Repository("courseDao")
+public class CourseDao extends BaseDao{
+	/**
+	 * get course information display by page
+	 * @param cname
+	 * @param tp
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Course> QuerybyCon(String cname, TurnPage tp) throws Exception{
+		List<Course> list = null;
+		String sql = "select * from tcourse";
+		if(cname!=null && !cname.equals("")){
+			sql=sql+" where cname like '%"+cname+"%'";
+		}
+		Connection conn = this.openConnection();
+		tp.allRows=this.getSqlAllRows(sql);		
+		tp.allPages=(tp.allRows-1)/tp.rows+1;
+		if(tp.page>tp.allPages){
+			tp.page=tp.allPages;
+		}
+		int iStart = (tp.page-1)*tp.rows;
+		String newSql=this.getTurnPageSql(sql, iStart, tp.rows);		
+		PreparedStatement ps = conn.prepareStatement(newSql);
+		list = new ArrayList<Course>();
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			Course course = new Course();
+			course.setCno(rs.getString("cno"));
+			course.setCname(rs.getString("cname"));
+			course.setCremark(rs.getString("cremark"));
+			list.add(course);
+		}
+		ps.close();
+		rs.close();
+		return list;
+	}
+	/**
+	 * delete course
+	 * @param cno
+	 */
+	public void deleteCourse(String cno) throws Exception{
+		String sql ="delete from tcourse where cno=?";
+		Connection conn = this.openConnection();
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ps.setString(1, cno);
+		ps.executeUpdate();
+		ps.close();	
+		
+	}
+	
+	/**
+	 * get course by cno
+	 * @param cno
+	 * @return
+	 * @throws Exception
+	 */
+	public Course getCourseByUno(String cno) throws Exception{
+		Course course = null;
+		String sql = "select * from tcourse where cno=?";
+		Connection conn = this.openConnection();
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ps.setString(1, cno);
+		ResultSet rs = ps.executeQuery();
+		while(rs.next()){
+			course = new Course();
+			course.setCno(cno);
+			course.setCname(rs.getString("cname"));
+			course.setCremark(rs.getString("cremark"));		
+		}
+		rs.close();
+		ps.close();
+		return course;
+	}
+
+	/**
+	 * update course
+	 * @param cno
+	 * @param cname
+	 * @param cremark
+	 * @throws Exception
+	 */
+	public void updateCourse(String cno, String cname, String cremark) throws Exception{
+		String sql="update tcourse set cname=?,cremark=? where cno=?";
+		Connection conn = this.openConnection();
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ps.setString(1, cname);
+		ps.setString(2, cremark);
+		ps.setString(3, cno);
+		ps.executeUpdate();
+		ps.close();
+		
+	}
+	
+	
+	/**
+	 * add course
+	 * @param course
+	 * @throws Exception
+	 */
+	public void addCourse(Course course) throws Exception {
+		String sql="insert into tcourse values(?,?,?)";
+		Connection conn = this.openConnection();
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ps.setString(1,course.getCno());
+		ps.setString(2,course.getCname());
+		ps.setString(3,course.getCremark());
+		ps.executeUpdate();
+		ps.close();
+	}
+	
+	/**
+	 * all courses
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Course> getAllCourses() throws Exception{
+		List<Course> courses = null;
+		String sql ="select * from tcourse ";
+		Connection conn = this.openConnection();
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ResultSet rs  = ps.executeQuery();
+		courses = new ArrayList<Course>();
+		while(rs.next()){
+			Course course = new Course();
+			course.setCno(rs.getString("cno"));
+			course.setCname(rs.getString("cname"));
+			course.setCremark(rs.getString("cremark"));
+			courses.add(course);
+		}
+		rs.close();
+		ps.close();
+		return courses;
+	}
+	
+	public List<ArrangeInfo> getArrInfo(TurnPage tp)throws Exception{
+		List<ArrangeInfo> ais = null;
+		String sql ="select ctid,c.cname,t.tname from tcoutea tc,teacher t,tcourse c where t.uno=tc.uno and c.cno=tc.cno";
+		Connection conn = this.openConnection();
+		tp.allRows=this.getSqlAllRows(sql);		
+		tp.allPages=(tp.allRows-1)/tp.rows+1;
+		if(tp.page>tp.allPages){
+			tp.page=tp.allPages;
+		}
+		int iStart = (tp.page-1)*tp.rows;
+		String newSql=this.getTurnPageSql(sql, iStart, tp.rows);	
+		PreparedStatement ps = conn.prepareStatement(newSql);
+		ResultSet rs  = ps.executeQuery();
+		ais = new ArrayList<ArrangeInfo>();
+		while(rs.next()){
+			ArrangeInfo ai = new ArrangeInfo();
+			ai.setCtid(rs.getString("ctid"));
+			ai.setCname(rs.getString("cname"));
+			ai.setTname(rs.getString("tname"));
+			ais.add(ai);
+		}
+		return ais;
+	}
+	public List<Course> getAllCourses(String uno) throws Exception{
+		List<Course> courses = null;
+		String sql ="select * from tcourse where cno in (select cno from tcoutea where uno=?) ";
+		Connection conn = this.openConnection();
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ps.setString(1, uno);
+		ResultSet rs  = ps.executeQuery();
+		courses = new ArrayList<Course>();
+		while(rs.next()){
+			Course course = new Course();
+			course.setCno(rs.getString("cno"));
+			course.setCname(rs.getString("cname"));
+			course.setCremark(rs.getString("cremark"));
+			courses.add(course);
+		}
+		rs.close();
+		ps.close();
+		return courses;
+	}
+
+}

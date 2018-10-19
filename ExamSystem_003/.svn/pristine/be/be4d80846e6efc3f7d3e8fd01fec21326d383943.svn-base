@@ -1,0 +1,108 @@
+package biz;
+
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import dao.KnowledgeDao;
+import dto.Know;
+import entity.Knowledge;
+import entity.TurnPage;
+import util.Log;
+
+
+public class KnowledgeBiz {
+	public List<Know> QuerybyCon(String kname,String uno,TurnPage tp) throws Exception{
+		List<Know> list = null;
+		KnowledgeDao dao = new KnowledgeDao();
+		try {
+			list = dao.QuerybyCon(kname, uno, tp);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+		return list;
+	}
+	//add  knowledge
+	
+
+	public void addknow(String cno, String kname) throws Exception{
+		Log.logger.info("add ------knowledge kno = "+kname);
+		
+		KnowledgeDao kdao = new KnowledgeDao();
+		try{
+			SimpleDateFormat sd = new SimpleDateFormat("yyyyMMdd");
+			String kno="k"+sd.format(new Date())+"-"+new Date().getTime();
+			kdao.addknow(kno,cno,kname);
+		}catch (Exception e) {
+			throw e;
+		}finally {
+			kdao.closeConnection();
+		}
+		
+	}
+
+
+	public void deleteKnow(String kno) throws Exception{
+		Log.logger.info("delete from know where kno="+kno);
+		
+		KnowledgeDao kdao = new KnowledgeDao();
+		try{
+			kdao.deleteKnow(kno);
+		}catch (Exception e) {
+			throw e;
+		}finally {
+			kdao.closeConnection();
+		}
+		
+	}
+
+
+	public Knowledge getKnowBykno(String kno) throws Exception {
+
+		Log.logger.info("query knowledge where kno="+kno);
+		
+		Knowledge know = null;
+		KnowledgeDao kdao = new KnowledgeDao();
+		try{
+			know = kdao.getKnowBykno(kno);	
+		}catch (Exception e) {
+			throw e;
+		}finally {
+			kdao.closeConnection();
+		}
+		return know;
+	}
+
+
+	public void updateKnow(String kno, String kname) throws Exception{
+		Log.logger.info("update know  where kno="+kno);
+		
+		KnowledgeDao kdao = new KnowledgeDao();
+		try{
+			kdao.updateKnow(kno,kname);
+		}catch (Exception e) {
+			throw e;
+		}finally {
+			kdao.closeConnection();
+		}
+		
+	}
+	
+	
+	public List<Knowledge> getAllknowBycno(String cno) throws Exception {
+		KnowledgeDao kdao = new KnowledgeDao();
+		List<Knowledge> list = null;
+		try {
+			list = kdao.getAllknowBycno(cno);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			kdao.closeConnection();
+		}
+		return list;
+	}
+
+}

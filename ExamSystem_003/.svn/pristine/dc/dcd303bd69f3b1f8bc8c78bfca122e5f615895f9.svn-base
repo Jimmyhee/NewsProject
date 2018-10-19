@@ -1,0 +1,26 @@
+package com.nepu.biz;
+
+import com.nepu.dao.ChoiceDao;
+import com.nepu.entity.Choice;
+import com.nepu.util.Log;
+
+public class ChoiceBiz {
+	
+	/**
+	 * add option of choice
+	 * @param choice
+	 * @throws Exception
+	 */
+	public void addChoice (Choice choice) throws Exception{
+		Log.logger.info("add option of choice");
+		
+		ChoiceDao dao = new ChoiceDao();
+		try {
+			dao.addChoice(choice);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+	}
+}

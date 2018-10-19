@@ -1,0 +1,8 @@
+eclipse.preferences.version=1
+encoding//WebRoot/manager/courseArrange.jsp=UTF-8
+encoding//WebRoot/question/otherquestion.jsp=UTF-8
+encoding//WebRoot/question/updateinfo.jsp=UTF-8
+encoding//src/action/LoginSvl.java=UTF-8
+encoding//src/action/ManagerSvl.java=UTF-8
+encoding//src/action/TeacherSvl.java=UTF-8
+encoding//src/dao/CourseDao.java=UTF-8

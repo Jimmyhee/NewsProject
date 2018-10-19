@@ -1,0 +1,227 @@
+package  biz;
+
+import java.util.List;
+
+import dao.CouteaDao;
+import  dao.TeacherDao;
+import  dao.UserDao;
+import  entity.IRole;
+import entity.StuResult;
+import  entity.Teacher;
+import  entity.TurnPage;
+import  entity.User;
+import  util.Log;
+
+public class TeacherBiz {
+
+	/**
+	 * all teachers
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Teacher> getAllTeachers() throws Exception{
+		
+	Log.logger.info("query all Teacher from database");
+	
+		TeacherDao tdao  = new TeacherDao();
+		List<Teacher> teachers = null;
+		try{
+			teachers = tdao.getAllTeachers();	
+		}catch (Exception e) {
+			throw e;
+		}finally {
+			tdao.closeConnection();
+		}
+	
+		return teachers;
+	}
+	
+	
+	/**
+	 * add teacher  
+	 * @param uno
+	 * @param tname
+	 * @param tphone
+	 * @throws Exception
+	 */
+	public void addTeacher(Teacher teacher) throws Exception{
+		
+		Log.logger.info("add teacher where uno = "+teacher.getUno());
+		
+		
+		TeacherDao tdao = new TeacherDao();
+		User user = new User();
+		
+		user.setUno(teacher.getUno());
+		user.setUname(teacher.getTname());		
+		user.setPwd("123456");
+		user.setRole(IRole.TEACHER);
+		
+		UserDao udao =new UserDao();
+		
+		try{
+			udao.beginTransaction();
+			udao.addUser(user);
+			tdao.setConn(udao.getConn());
+			tdao.addTeacher(teacher);
+			udao.commit();
+		}catch (Exception e) {
+			udao.rollback();
+			throw e;
+		}finally {
+			tdao.closeConnection();
+		}
+	}
+
+
+	/**
+	 * delete teacher 
+	 * @param uno
+	 * @throws Exception
+	 */
+	public void deleteTeacher(String uno) throws Exception{
+		
+		Log.logger.info("delete from teacher where uno="+uno);
+		
+		TeacherDao tdao = new TeacherDao();
+		UserDao udao = new UserDao();
+		CouteaDao ctdao = new CouteaDao();
+		try{
+			ctdao.beginTransaction();
+			ctdao.deleteCouage(null, null, uno);
+			tdao.setConn(ctdao.getConn());
+			tdao.deleteTeacher(uno);
+			udao.setConn(tdao.getConn());
+			udao.deleteUser(uno);
+			ctdao.commit();
+		}catch (Exception e) {
+			ctdao.rollback();
+			throw e;
+		}finally {
+			ctdao.closeConnection();
+		}
+	}
+
+
+	/**
+	 * query teacher by uno 
+	 * @param uno
+	 * @return
+	 * @throws Exception
+	 */
+	public Teacher getTeacherByUno(String uno) throws Exception{
+		
+		Log.logger.info("query teacher where uno="+uno);
+		
+		Teacher teacher = null;
+		TeacherDao tdao = new TeacherDao();
+		
+		try{
+			teacher = tdao.getTeacherByUno(uno);	
+		}catch (Exception e) {
+			throw e;
+		}finally {
+			tdao.closeConnection();
+		}
+		return teacher;
+	}
+
+	/**
+	 * update teacher 
+	 * @param uno
+	 * @param tname
+	 * @param tphone
+	 * @throws Exception
+	 */
+	public void updateTeacher(String uno, String tname, String tphone)  throws Exception{
+		
+		Log.logger.info("update teacher  where uno="+uno);
+		
+		TeacherDao tdao = new TeacherDao();
+		UserDao udao = new UserDao();
+		try{
+			tdao.beginTransaction();
+			tdao.updateTeacher(uno, tname, tphone);
+			udao.setConn(tdao.getConn());
+			udao.updateUser(uno,tname);
+			tdao.commit();
+		}catch (Exception e) {
+			tdao.rollback();
+			throw e;
+		}finally {
+			tdao.closeConnection();
+		}
+	}
+
+	/**
+	 * query teacher by addition 
+	 * @param uno
+	 * @param tname
+	 * @param tp
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Teacher> QuerybyCon(String uno, String tname, TurnPage tp) throws Exception {
+		Log.logger.info("query all Teacher ");
+		
+		List<Teacher> list=null;
+		TeacherDao dao = new TeacherDao();
+		try {
+			list=dao.QuerybyCon(uno, tname,tp);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}			
+		return list;
+	}
+
+	/**
+	 * query All student Result
+	 * @param pno
+	 * @param said
+	 * @param tp
+	 * @return
+	 * @throws Exception
+	 */
+	public List<StuResult> QueryAllStuResult(String pno, String said, TurnPage tp) throws Exception{
+		Log.logger.info("get All student Result where pno = "+pno +"and said ="+said);
+		
+		List<StuResult> list=null;
+		TeacherDao tdao = new TeacherDao();
+		try{
+			list = tdao.QueryAllStuResult(pno,said,tp);
+		}catch (Exception e) {
+			throw e;
+		}finally {
+			tdao.closeConnection();
+		}
+		
+		return list;
+	}
+
+	/**
+	 * checked student Result
+	 * @param said
+	 * @param pno
+	 * @param uno
+	 * @param allpoint
+	 * @throws Exception
+	 */
+	public void checkStuPaper(String said, String pno, String uno, double allpoint) throws Exception{
+		
+		Log.logger.info(" checked  Paper where uno = " +uno +"and  pno = " +pno);
+		TeacherDao tdao = new TeacherDao();
+		
+		try{
+			tdao.checkStuPaper(said,pno,uno,allpoint);
+		}catch (Exception e) {
+			throw e;
+		}finally {
+			tdao.closeConnection();
+		}
+		
+	}
+	
+
+}

@@ -1,0 +1,25 @@
+package com.nepu.dto;
+
+public class Know {
+	private String kno;	
+	private String kname;
+	private String cname;
+	public String getKno() {
+		return kno;
+	}
+	public void setKno(String kno) {
+		this.kno = kno;
+	}
+	public String getKname() {
+		return kname;
+	}
+	public void setKname(String kname) {
+		this.kname = kname;
+	}
+	public String getCname() {
+		return cname;
+	}
+	public void setCname(String cname) {
+		this.cname = cname;
+	}
+}

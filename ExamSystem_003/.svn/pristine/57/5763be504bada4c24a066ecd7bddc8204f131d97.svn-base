@@ -1,0 +1,18 @@
+package biz;
+
+import dao.ChoiceDao;
+import entity.Choice;
+
+public class ChoiceBiz {
+	
+	public void addChoice (Choice choice) throws Exception{
+		ChoiceDao dao = new ChoiceDao();
+		try {
+			dao.addChoice(choice);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+	}
+}

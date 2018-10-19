@@ -1,0 +1,55 @@
+package  action;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import  biz.UserBiz;
+import  entity.User;
+@WebServlet("/UpdatePswSvl")
+public class UpdatePswSvl extends HttpServlet {
+
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	/**
+	 * update password 
+	 */
+	public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		String uno = request.getParameter("uno");
+		String pwd = request.getParameter("password");
+		String pwd1 = request.getParameter("password1");
+		String pwd2 = request.getParameter("password2");
+		
+		UserBiz biz = new UserBiz();
+		
+		if(pwd1.equals(pwd2)||pwd1==pwd2){
+			try{
+				 User user = biz.login(uno, pwd);
+				 
+				 if(user!=null){
+					 biz.updatePwd(uno,pwd1);
+					 request.setAttribute("msg", "update success");
+					 request.getRequestDispatcher("/Login.jsp").forward(request, response); 
+				 }else{
+					 request.setAttribute("msg", "wrong password! Please try again!");
+					 request.getRequestDispatcher("/UpdatePwd.jsp").forward(request, response); 
+				 }
+			}catch (Exception e) {
+				request.setAttribute("msg", "Network error Please call admin!");
+				 request.getRequestDispatcher("/UpdatePwd.jsp").forward(request, response);
+			}
+		}else{
+			request.setAttribute("msg", "different password ! Please resume load!");
+			request.getRequestDispatcher("/UpdatePwd.jsp").forward(request, response);
+		}
+	}
+}

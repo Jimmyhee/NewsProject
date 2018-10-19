@@ -1,0 +1,43 @@
+package entity;
+
+import java.util.Date;
+
+public class Paper {
+	private String pno;//试卷编号
+	private String ptitle;//试卷标题
+	private Date ptime; //创建日期
+	private double point; //试卷总分
+	private int alltime;
+	
+	public String getPno() {
+		return pno;
+	}
+	public void setPno(String pno) {
+		this.pno = pno;
+	}
+	public String getPtitle() {
+		return ptitle;
+	}
+	public void setPtitle(String ptitle) {
+		this.ptitle = ptitle;
+	}
+	public Date getPtime() {
+		return ptime;
+	}
+	public void setPtime(Date ptime) {
+		this.ptime = ptime;
+	}
+	public double getPoint() {
+		return point;
+	}
+	public void setPoint(double point) {
+		this.point = point;
+	}
+	public int getAlltime() {
+		return alltime;
+	}
+	public void setAlltime(int alltime) {
+		this.alltime = alltime;
+	}
+	
+}

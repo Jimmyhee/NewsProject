@@ -1,0 +1,85 @@
+package action;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import biz.CourseBiz;
+import entity.Course;
+import entity.TurnPage;
+
+/**
+ * Servlet implementation class CourseQuerySvl
+ */
+@WebServlet("/CourseQuerySvl")
+public class CourseQuerySvl extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public CourseQuerySvl() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#service(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String operate = request.getParameter("operate");
+		 if(operate.equals("querycourse")){
+			this.doQueryCourse(request, response);
+		}
+	}
+	/**
+	 * query allstudent 
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	public void doQueryCourse(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		String cno = request.getParameter("cno");
+		String cname = request.getParameter("cname");
+		String pg = request.getParameter("page");
+		CourseBiz biz = new CourseBiz();
+		TurnPage tp = new TurnPage();
+		int page = 1;
+		if (pg != null) {
+			page = Integer.parseInt(pg);
+			if (page < 1) {
+				tp.page = 1;
+			} else {
+				tp.page = page;
+			}
+		}
+		try {
+			List<Course> courses = biz.QuerybyCon(cname, tp);
+			if (courses != null && courses.size() > 0) {
+				request.setAttribute("tp", tp);
+				request.setAttribute("cno", cno);
+				request.setAttribute("cname",cname);
+				request.getSession().setAttribute("courses", courses);
+				request.getRequestDispatcher("course/queryCourse.jsp").forward(request, response);
+			} else {
+				request.setAttribute("msg", "no data!");
+				request.getSession().setAttribute("students", null);
+				request.getRequestDispatcher("course/queryCourse.jsp").forward(request, response);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			request.setAttribute("msg", "Network error Please call admin!");
+			request.getRequestDispatcher("/error.jsp").forward(request, response);
+		}
+	
+	}
+
+
+}

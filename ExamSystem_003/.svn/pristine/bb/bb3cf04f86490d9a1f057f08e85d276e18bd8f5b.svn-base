@@ -1,0 +1,18 @@
+package dao;
+
+import java.sql.PreparedStatement;
+
+public class ResultDao extends BaseDao{
+	public void addResult(String said,String uno,String pno)throws Exception{
+		String sql="insert into tsturesult values(?,?,?,?,?)";
+		this.openConnection();
+		PreparedStatement ps = this.conn.prepareStatement(sql);
+		ps.setString(1, said);
+		ps.setString(2, uno);
+		ps.setString(3, pno);
+		ps.setDouble(4, 0);
+		ps.setInt(5,0);
+		ps.executeUpdate();
+		ps.close();
+	}
+}

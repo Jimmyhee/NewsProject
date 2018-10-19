@@ -1,0 +1,96 @@
+/*
+Template Name: Educational
+File: Navigation CSS
+Author: OS Templates
+Author URI: #
+Licence: <a href="#">Website Template Licence</a>
+*/
+
+#topnav{
+	height:75px;
+	overflow:hidden;
+	}
+
+#topnav ul{
+	display:block;
+	width:100%;
+	height:75px;
+	margin:0;
+	padding:0;
+	list-style:none;
+	}
+
+#topnav ul li ul{display:none;}
+
+#topnav ul li.active ul{
+	display:block;
+	position:absolute;
+	top:35px;
+	left:0;
+	width:100%;
+	height:40px;
+	}
+
+#topnav li{display:block; float:left;}
+#topnav li.last{margin-right:0;}
+
+#topnav ul li a:link, #topnav ul li a:visited, #topnav ul li a:hover{
+	display:block;
+	float:left;
+	height:25px;
+	padding:10px 15px 0 15px;
+	color:#333333;
+	background-color:#E5E2C9;
+	}
+
+#topnav ul ul li a:link, #topnav ul ul li a:visited, #topnav ul ul li a:hover{
+	float:left;
+	height:auto;
+	margin:13px 15px 0 0;
+	padding:0 16px 0 0;
+	color:#FFFFFF;
+	background-color:#591434;
+	border-right:1px solid #FFFFFF;
+	}
+
+#topnav ul ul li.last a{
+	margin-right:0;
+	padding:0;
+	border-right:none;
+	}
+
+#topnav ul li.active a, #topnav ul li a:hover{
+	color:#FFFFFF;
+	background-color:#591434;
+	}
+
+/* ----------------------------------------------Column Navigation-------------------------------------*/
+
+.btnques{
+	border-style:solid;
+	border-width:1px;
+	border-color:#333333;
+	border-radius: 10%;
+	margin: 3px;
+	float:  left;
+	width: 40px; height: 35px; line-height:35px;
+	text-align: center; vertical-align: middle;}
+ .btnques:hover{
+	background: #591434;
+}
+.btnzi{
+	display:inline-block;
+	width: auto;
+	padding-bottom: 8px;
+	padding-top: 8px;
+	padding-left: 20px;
+	padding-right: 20px;
+	background: #831439;
+	border-radius: 5%;
+	color:#FFF;
+	font-family: "微软雅黑";
+}
+.btnzi:hover{
+	background: #431439;
+}
+

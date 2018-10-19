@@ -1,0 +1,202 @@
+package biz;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import dao.ChoiceDao;
+import dao.QuestionDao;
+import entity.Choice;
+import entity.Question;
+import entity.TurnPage;
+import util.Log;
+
+public class QuestionBiz {
+	/**
+	 * add question 
+	 * @param qno
+	 * @param qtype
+	 * @param kno
+	 * @throws Exception
+	 */
+	public void addQuestion(String qno,int qtype,String kno) throws Exception{
+		Log.logger.info(" add---------question ");
+		
+		QuestionDao dao = new QuestionDao();
+		SimpleDateFormat sd = new SimpleDateFormat("yyyyMMdd");
+		String kqid="q"+sd.format(new Date())+"-"+new Date().getTime();
+		
+		try {		
+			dao.beginTransaction();
+			dao.addQuestion(qno, qtype);
+			dao.addQuesknow(kqid, qno, kno);
+			dao.commit();
+		} catch (Exception e) {
+			dao.rollback();
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+	}
+	
+	/**
+	 * complete question
+	 * @param qname
+	 * @param qanswer
+	 * @param qexplain
+	 * @param qno
+	 * @throws Exception
+	 */
+	public void completeQuestion(String qname,String qanswer,String qexplain,String qno) throws Exception{
+		Log.logger.info(" complete ---questions  ");
+		
+		QuestionDao dao = new QuestionDao();
+		
+		try {
+			dao.completeQuestion(qname, qanswer, qexplain, qno);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+	}
+	
+	/**
+	 * get all question 
+	 * @param qname
+	 * @param qtype
+	 * @param tp
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Question> QuerybyCon(String qname,String qtype,TurnPage tp) throws Exception{
+		Log.logger.info(" get all --------question   ");
+		
+		List<Question> list = null;
+		QuestionDao dao = new QuestionDao();
+		
+		try {
+			list = dao.QuerybyCon(qname, qtype, tp);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+		return list;
+	}
+	
+	/**
+	 * delete question by qno 
+	 * @param qno
+	 * @throws Exception
+	 */
+	public void delQuestion(String qno)throws Exception{
+		Log.logger.info("delete question by qno ");
+		
+		QuestionDao dao = new QuestionDao();
+		
+		try {
+			dao.beginTransaction();
+			dao.delChoice(qno);
+			dao.delQuesKnow(qno);
+			dao.delQuestion(qno);
+			dao.commit();
+		} catch (Exception e) {
+			dao.rollback();
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+	}
+	/**
+	 * get question by qno 
+	 * @param qno
+	 * @return
+	 * @throws Exception
+	 */
+	public Question queryQuesByqno(String qno)throws Exception{
+		Log.logger.info("get question by qno");
+		
+		Question question = null;
+		QuestionDao dao = new QuestionDao();
+		
+		try {
+			question = dao.queryQuesByqno(qno);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+		return question;
+	}
+	
+	/**
+	 * get all choice by qno
+	 * @param qno
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Choice> queryChoiceByqno(String qno)throws Exception{
+		Log.logger.info("get all choice  by qno ");
+		
+		List<Choice> list = null;
+		QuestionDao dao = new QuestionDao();
+		try {
+			list = dao.queryChoiceByqno(qno);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+		return list;
+	}
+	
+	/**
+	 * update  chose question Info 
+	 * @param question
+	 * @param oids
+	 * @param onames
+	 * @throws Exception
+	 */
+	public void updateChQues(Question question,String []oids,String []onames)throws Exception{
+		
+		Log.logger.info("update  choose question Info ");
+		
+		QuestionDao dao = new QuestionDao();
+		ChoiceDao cdao = new ChoiceDao();
+		
+		try {
+			dao.beginTransaction();
+			dao.updateQues(question);
+			cdao.setConn(dao.getConn());
+			for(int i=0;i<oids.length;i++){
+				cdao.updateChoice(oids[i],onames[i]);
+			}
+			dao.commit();
+		} catch (Exception e) {
+			dao.rollback();
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+	}
+	
+	/**
+	 * update other question by qno
+	 * @param question
+	 * @throws Exception
+	 */
+	public void updateOtherQues(Question question)throws Exception{
+		Log.logger.info("update  other question Info ");
+
+		QuestionDao dao = new QuestionDao();
+		try {
+			dao.updateQues(question);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+	}
+	
+}

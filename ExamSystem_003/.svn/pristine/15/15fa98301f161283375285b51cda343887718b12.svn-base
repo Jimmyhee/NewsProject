@@ -1,0 +1,55 @@
+package  biz;
+
+import  dao.UserDao;
+import  entity.User;
+import  util.Log;
+
+public class UserBiz {
+
+	/**
+	 * user login 
+	 * @param uno
+	 * @param pwd
+	 * @return
+	 * @throws Exception
+	 */
+	public User login(String uno, String pwd) throws Exception{
+		
+		 Log.logger.info("login : uno=" + uno  + "---pwd=" + pwd);
+		 
+		 User user = null;
+		 UserDao  dao = new UserDao();
+		 try{
+			 user = dao.login(uno, pwd); 
+		 }catch (Exception e) {
+			 Log.logger.error(e.getMessage());
+			 throw e;
+		 }finally {
+			dao.closeConnection();
+		}
+		return user;
+	}
+
+	/**
+	 *User update password 
+	 * @param uno
+	 * @param pwd1
+	 * @throws Exception
+	 */
+	public void updatePwd(String uno, String pwd1) throws Exception {
+		
+		 Log.logger.info("updatepwd : uno=" + uno );
+		 
+		 UserDao udao = new UserDao();
+		 try{
+			 udao.updatePwd(uno,pwd1);
+		 }catch (Exception e) {
+			throw e;
+		}finally {
+			udao.closeConnection();
+		}
+		
+		
+	}
+
+}

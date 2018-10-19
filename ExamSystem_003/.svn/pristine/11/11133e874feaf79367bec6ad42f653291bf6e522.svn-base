@@ -1,0 +1,60 @@
+package com.nepu.biz;
+
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import com.nepu.dao.CouteaDao;
+import com.nepu.util.Log;
+
+
+public class CouteaBiz {
+	
+	/**
+	 * add information of arrangement
+	 * @param cno
+	 * @param uno
+	 * @throws Exception
+	 */
+	public void addArrange(String cno,String uno) throws Exception{
+		Log.logger.info("add information of arrangement");
+		
+		CouteaDao dao = new CouteaDao();
+		try {
+			SimpleDateFormat sd = new SimpleDateFormat("yyyyMMdd");
+			String ctid="ct"+sd.format(new Date())+"-"+new Date().getTime();
+			dao.addArrange(ctid, cno, uno);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+	}
+
+
+	/**
+	 * delete course arrangement
+	 * @param ctid
+	 * @param cno
+	 * @param uno
+	 * @throws Exception
+	 */
+	public void deleteCouage(String ctid, String cno, String uno) throws Exception{
+		Log.logger.info("delete course-arragement ");
+		
+		CouteaDao ctdao = new CouteaDao();
+		
+		try{
+			ctdao.beginTransaction();
+			ctdao.deleteCouage(ctid,cno,uno);
+			ctdao.commit();
+		}catch (Exception e) {
+			ctdao.rollback();
+			throw e;
+		}finally {
+			ctdao.closeConnection();
+		}
+		
+	}
+
+}

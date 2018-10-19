@@ -1,0 +1,65 @@
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+<%@page isELIgnored="false"%>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <base href="<%=basePath%>">
+    
+    <title>index page</title>
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">    
+	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+	<meta http-equiv="description" content="This is my page">
+	<link rel="stylesheet" href="<%=basePath%>/css/layout.css" type="text/css" />
+	<script type="text/javascript" src="<%=basePath%>jquery/jquery-1.4.1.min.js"></script>
+	<script type="text/javascript" src="<%=basePath%>jquery/jquery.slidepanel.setup.js"></script>
+	<script type="text/javascript" src="<%=basePath%>jquery/jquery-ui-1.7.2.custom.min.js"></script>
+	<script type="text/javascript" src="<%=basePath%>jquery/jquery.tabs.setup.js"></script>
+  </head>
+  
+  <body>
+    
+
+
+<!-- ####################################################################################################### -->
+<div class="wrapper col4">
+  <div id="container">
+    <div id="hpage">
+      <ul>
+        <li>
+          <h2>东油要闻</h2>
+          <div class="imgholder"><a href="#"><img src="<%=basePath%>/img/index/5.jpg" alt="" /></a></div>
+          <p>我校学报获“中国科技论文在线优秀期刊”一等奖！！！为更好贯彻落实十九大精神，促进科技期刊健康发展，提高科技期刊的质量，推动科技期刊的数字化建设，扩大期刊的影响力，促进论文免费共享，建设良好的科研环境，使科技期刊更好地为科研和科研工作者服务，教育部科技发展中心对截至2016年12月31日已收录在“中国科技论文在线”《科技期刊》栏目的教育部主管的期刊，进行严格评审，评选出“中国科技论文在线优秀期刊”一等奖97项、二等奖106项。</p>
+          <p class="readmore"><a href="#">Continue Reading &raquo;</a></p>
+        </li>
+        <li>
+          <h2>科技信息</h2>
+          <div class="imgholder"><a href="#"><img src="<%=basePath%>/img/index/6.jpg" alt="" /></a></div>
+          <p>我校在黑龙江省第四届中国“互联网+”大学生创新创业大赛中获佳绩，第四届中国“互联网+”大学生创新创业大赛黑龙江赛区决赛暨国赛选拔赛在哈尔滨工业大学成功举行。我校共有13支团队入围省赛决赛，经大赛组委会专家评审团专业评审，共有12个项目团队获奖。其中，5个项目荣获二等奖，7个项目荣获三等奖。我校团委副书记苍留松、创新创业学院院长付光杰、大学科技园主任梁宏宝参加大赛闭幕式。</p>
+          <p class="readmore"><a href="#">Continue Reading &raquo;</a></p>
+        </li>
+        <li>
+          <h2>通知公告</h2>
+          <div class="imgholder"><a href="#"><img src="<%=basePath%>/img/index/7.jpg" alt="" /></a></div>
+          <p>国际教育学院招生公告，为吸引更多的国际学生来我校留学深造，进一步提升学校国际影响力和国际化水平，特号召全校师生员工参与到招收来华留学生宣传工作中来。具体说明详见附件《东北石油大学国际教育学院招生简章》。如需纸制版招生简章或信息咨询，请与国际教育学院联系。联系人：杜琳琳 李宏伟 联系电话：0459-6507955  18745965991  13634662813</p>
+          <p class="readmore"><a href="#">Continue Reading &raquo;</a></p>
+        </li>
+        <li class="last">
+          <h2>学生生活</h2>
+          <div class="imgholder"><a href="#"><img src="<%=basePath%>/img/index/8.jpg" alt="" /></a></div>
+          <p>东北石油大学第四届美食节，为推进校园文化建设，倡导绿色健康饮食理念，伙食管理科将在9月8日举办东北石油大学第四届美食节，本次活动将全面展示伙食管理科厨艺技能水平，同时丰富校园文化生活，让全校师生品尝到伙食管理科食堂厨师们亲手制做的各种特色主副食品</p>
+          <p class="readmore"><a href="#">Continue Reading &raquo;</a></p>
+        </li>
+      </ul>
+      <br class="clear" />
+    </div>
+  </div>
+</div>
+  </body>
+</html>

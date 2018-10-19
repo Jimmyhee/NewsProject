@@ -1,0 +1,39 @@
+package biz;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import dao.ResultDao;
+import dto.Resultdto;
+import entity.TurnPage;
+
+public class ResultBiz {
+	public void addResult(String uno,String pno)throws Exception{
+		ResultDao dao = new ResultDao();
+		SimpleDateFormat sd = new SimpleDateFormat("yyyyMMdd");
+		String said="rslt"+sd.format(new Date())+"-"+new Date().getTime();
+		try {
+			dao.addResult(said, uno, pno);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+	}
+	
+	
+	public List<Resultdto> queryResult(String uno,String ptitle,TurnPage tp)throws Exception{
+		List<Resultdto> list = null;
+		ResultDao dao =new ResultDao();
+		try {
+			list = dao.queryResult(uno, ptitle ,tp); 
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+		
+		return list;
+	}
+}

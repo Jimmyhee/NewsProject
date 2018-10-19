@@ -1,0 +1,60 @@
+package com.nepu.biz;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import com.nepu.dao.ResultDao;
+import com.nepu.dto.Resultdto;
+import com.nepu.entity.TurnPage;
+import com.nepu.util.Log;
+
+public class ResultBiz {
+	/**
+	 * add Student Result
+	 * @param uno
+	 * @param pno
+	 * @throws Exception
+	 */
+	public void addResult(String uno,String pno)throws Exception{
+		
+		Log.logger.info("add student result where uno = "+uno +"and  pno = "+pno);
+		
+		ResultDao dao = new ResultDao();
+		SimpleDateFormat sd = new SimpleDateFormat("yyyyMMdd");
+		String said="rslt"+sd.format(new Date())+"-"+new Date().getTime();
+		try {
+			dao.addResult(said, uno, pno);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+	}
+	
+	/**
+	 * get all Result 
+	 * @param uno
+	 * @param ptitle
+	 * @param tp
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Resultdto> queryResult(String uno,String ptitle,TurnPage tp)throws Exception{
+		
+		Log.logger.info("query all Result where uno = "+ uno);
+		
+		List<Resultdto> list = null;
+		ResultDao dao =new ResultDao();
+		
+		try {
+			list = dao.queryResult(uno, ptitle ,tp); 
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+		
+		return list;
+	}
+}

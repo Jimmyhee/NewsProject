@@ -1,0 +1,128 @@
+package biz;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import dao.PaperDao;
+import dao.QuestionDao;
+import entity.Choice;
+import entity.Paper;
+import entity.Question;
+import entity.TurnPage;
+import util.Log;
+
+public class PaperBiz {
+	/**
+	 * add paper 
+	 * @param ptitle
+	 * @param point
+	 * @param alltime
+	 * @throws Exception
+	 */
+	public void addPaper(String pno,String ptitle, double point, int alltime) throws Exception{
+		Log.logger.info("add ------PAPER ");
+		
+		PaperDao pdao = new PaperDao();
+		try{
+			SimpleDateFormat sd = new SimpleDateFormat("yyyyMMdd");
+			String ptime = sd.format(new Date());
+			Paper paper = new Paper();
+			paper.setPno(pno);
+			paper.setPtitle(ptitle);
+			paper.setPtime(sd.parse(ptime));
+			paper.setPoint(point);
+			paper.setAlltime(alltime);
+			pdao.addPaper(paper);
+		}catch (Exception e) {
+			throw e;
+		}finally {
+			pdao.closeConnection();
+		}
+	}
+
+	public List<Question> QuerybyKon(String qno, String qname,TurnPage tp) throws Exception {
+		Log.logger.info("query -------------- allquestions");
+		
+		List<Question> list=null;
+		QuestionDao qdao = new QuestionDao();
+		try {
+			list=qdao.QuerybyKon(qno, qname,tp);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			qdao.closeConnection();
+		}			
+		return list;
+	}
+
+	public void addQues(String pno, String qno) throws Exception{
+			Log.logger.info("add ------Question to paper ");
+		
+		PaperDao pdao = new PaperDao();
+		try{
+			SimpleDateFormat sd = new SimpleDateFormat("yyyyMMdd");
+			String pqid ="pq"+sd.format(new Date())+"-"+new Date().getTime();
+			pdao.addQues(pqid,pno,qno);
+		}catch (Exception e) {
+			throw e;
+		}finally {
+			pdao.closeConnection();
+		}
+	
+	}
+
+	public List<Paper> QuerybyPon(String ptitle, String pno, TurnPage tp) throws Exception {
+		List<Paper> list = null;
+		PaperDao pdao = new PaperDao();
+		try {
+			list = pdao.QuerybyPon(ptitle, pno, tp);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			pdao.closeConnection();
+		}
+		return list;
+	}
+
+	public List<Question> getAllQuestion(String pno) throws Exception {
+		List<Question> questions= null;
+		PaperDao pdao = new PaperDao();
+		try {
+			questions = pdao.getAllQuestion(pno);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			pdao.closeConnection();
+		}
+		return questions;
+	}
+
+	public void deletePaper(String pno) throws Exception{
+		PaperDao pdao = new PaperDao();
+		pdao.beginTransaction();
+		try{
+			pdao.deletePaperQue(pno);
+			pdao.deletePaper(pno);
+			pdao.commit();
+		}catch (Exception e) {
+			pdao.rollback();
+			throw e;
+		}finally {
+			pdao.closeConnection();
+		}
+	}
+
+	public List<Choice> getAllChoices(String pno) throws Exception{
+		List<Choice> choices= null;
+		PaperDao pdao = new PaperDao();
+		try {
+			choices = pdao.getAllChoices(pno);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			pdao.closeConnection();
+		}
+		return choices;
+	}
+}

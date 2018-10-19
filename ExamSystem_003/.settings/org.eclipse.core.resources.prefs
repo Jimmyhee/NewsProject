@@ -1,0 +1,9 @@
+eclipse.preferences.version=1
+encoding//WebRoot/manager/courseArrange.jsp=UTF-8
+encoding//WebRoot/question/otherquestion.jsp=UTF-8
+encoding//WebRoot/question/updateinfo.jsp=UTF-8
+encoding//src/com/nepu/action/LoginSvl.java=UTF-8
+encoding//src/com/nepu/action/ManagerSvl.java=UTF-8
+encoding//src/com/nepu/action/TeacherSvl.java=UTF-8
+encoding//src/com/nepu/dao/CourseDao.java=UTF-8
+encoding/<project>=GBK

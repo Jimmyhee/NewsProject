@@ -1,0 +1,56 @@
+package  com.nepu.biz;
+
+import com.nepu.dao.ManagerDao;
+import com.nepu.dao.UserDao;
+import com.nepu.entity.Manager;
+import com.nepu.util.Log;
+
+public class ManagerBiz {
+	/**
+	 * query manager by uno 
+	 * @param uno
+	 * @return
+	 * @throws Exception
+	 */
+	public Manager getManager(String uno) throws Exception{
+		Log.logger.info("query manager by uno :"+uno);
+		
+		Manager manager = null;
+		ManagerDao mdao = new ManagerDao();
+		try{
+			manager = mdao.getManager(uno);
+		}catch (Exception e) {
+			throw e;
+		}finally{
+			mdao.closeConnection();
+		}
+		return manager;
+	}
+	
+	
+	/**
+	 * update manager 
+	 * @param manager
+	 * @throws Exception
+	 */
+	public void UpdateManager(Manager manager) throws Exception{
+		Log.logger.info("update manager");
+		
+		ManagerDao mdao = new ManagerDao();
+		UserDao udao = new UserDao();
+		try{
+			 mdao.beginTransaction();
+			 mdao.UpdateManager(manager);
+			 udao.setConn(mdao.getConn());
+			 udao.updateUser(manager.getUno(),manager.getMname());
+			 mdao.commit();
+		}catch (Exception e) {
+			mdao.rollback();
+			throw e;
+		}finally{
+			mdao.closeConnection();
+		}
+	}
+
+	
+}

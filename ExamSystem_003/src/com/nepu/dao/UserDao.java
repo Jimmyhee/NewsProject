@@ -1,0 +1,108 @@
+package  com.nepu.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import org.springframework.stereotype.Repository;
+
+import com.nepu.entity.User;
+
+@Repository("userDao")
+public class UserDao extends BaseDao{
+
+	/**
+	 * login
+	 * @param uno
+	 * @param pwd
+	 * @return
+	 * @throws Exception
+	 */
+	public User login(String uno, String pwd) throws Exception{
+		
+		String sql = "select * from tuser where uno=? and pwd= ?"; 
+		User user = null;
+		Connection conn = this.openConnection();
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ps.setString(1, uno);
+		ps.setString(2, pwd);
+		ResultSet rs = ps.executeQuery();
+		 while(rs.next()) {
+			 
+			 int role = rs.getInt("role");
+			 user = new User();
+			 user.setUno(uno);
+			 user.setPwd(pwd);
+			 user.setRole(role);
+			 user.setUname(rs.getString("uname"));
+			
+		 }	
+		 rs.close();
+		 ps.close();
+		return user;
+	}
+
+	/**
+	 * add user
+	 * @param user
+	 * @throws Exception
+	 */
+	public void addUser(User user) throws Exception {
+		String sql="insert into tuser values(?,?,?,?)";
+		Connection conn = this.openConnection();
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ps.setString(1, user.getUno());
+		ps.setString(2, user.getUname());		
+		ps.setString(3, user.getPwd());
+		ps.setInt(4, user.getRole());		
+		ps.executeUpdate();
+		ps.close();
+		
+	}
+
+	/**
+	 * delete user
+	 * @param uno
+	 * @throws Exception
+	 */
+	public void deleteUser(String uno) throws Exception {
+		String sql ="delete from tuser where uno=?";
+		Connection conn = this.openConnection();
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ps.setString(1, uno);
+		ps.executeUpdate();
+		ps.close();
+	}
+
+	/**
+	 * update user
+	 * @param uno
+	 * @param uname
+	 * @throws Exception
+	 */
+	public void updateUser(String uno, String uname)  throws Exception{
+		String sql = "update tuser set uname=? where uno=?";
+		Connection conn = this.openConnection();
+		PreparedStatement ps = conn.prepareStatement(sql);	
+		ps.setString(1,uname);
+		ps.setString(2,uno);
+		ps.executeUpdate();
+		ps.close();
+	}
+
+	/**
+	 * update password
+	 * @param uno
+	 * @param pwd1
+	 * @throws Exception
+	 */
+	public void updatePwd(String uno, String pwd1) throws Exception {
+		String sql ="update tuser set pwd = ? where uno = ?";
+		Connection conn = this.openConnection();
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ps.setString(1, pwd1);
+		ps.setString(2, uno);
+		ps.executeUpdate();
+		ps.close();
+	}
+}

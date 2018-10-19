@@ -1,0 +1,188 @@
+package action;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import biz.ChoiceBiz;
+import biz.CourseBiz;
+import biz.QuestionBiz;
+import entity.Choice;
+import entity.Course;
+import entity.User;
+import util.Log;
+
+/**
+ * Servlet implementation class QuestionAddSvl
+ */
+@WebServlet("/QuestionAddSvl")
+public class QuestionAddSvl extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public QuestionAddSvl() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#service(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		String operate = request.getParameter("operate");
+		
+		if(operate.equals("getcourse")){
+			this.doGetCourse(request, response);
+		}
+		if(operate.equals("choosetype")){
+			this.doChooseType(request, response);
+		}
+		if(operate.equals("add")){
+			this.doAdd(request, response);
+		}
+		if(operate.equals("addother")){
+			this.doAddOther(request, response);
+		}
+	}
+	
+	/**
+	 * get all course 
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	protected void doGetCourse(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		User user =(User)request.getSession().getAttribute("user");
+		String uno = user.getUno();
+		CourseBiz biz = new CourseBiz();
+		
+		try {
+			List<Course> courses = biz.getAllCourses(uno);
+			
+			if(courses!=null&courses.size()>0){
+				request.setAttribute("courses", courses);
+				request.getRequestDispatcher("question/addquestion.jsp").forward(request, response);
+			}else{
+				request.setAttribute("courses", courses);
+				request.setAttribute("msg", "You have not taught any courses yet");				
+				request.getRequestDispatcher("question/addquestion.jsp").forward(request, response);
+			}
+		} catch (Exception e) {			
+			Log.logger.error(e.getMessage());
+			request.setAttribute("msg", "Network error Please call admin!");
+			request.getRequestDispatcher("/error.jsp").forward(request, response);
+		}
+	}
+	/**
+	 * differ question type 
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	protected void doChooseType(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		String qtype=request.getParameter("qtype");
+		String kno=request.getParameter("kno");
+		QuestionBiz biz = new QuestionBiz();
+		
+		try {
+			SimpleDateFormat sd = new SimpleDateFormat("yyyyMMdd");
+			String qno="q"+sd.format(new Date())+"-"+new Date().getTime();
+			
+			biz.addQuestion(qno,Integer.parseInt(qtype),kno);
+			request.setAttribute("qno",qno);
+			if(qtype.equals("1")){
+				request.getRequestDispatcher("question/choice.jsp").forward(request, response);
+			}else{
+				request.getRequestDispatcher("question/otherquestion.jsp").forward(request, response);
+			}
+		} catch (Exception e) {
+			Log.logger.error(e.getMessage());
+			request.setAttribute("msg", "Network error Please call admin!");
+			request.getRequestDispatcher("/error.jsp").forward(request, response);
+		}
+	}
+	
+	/**
+	 * add choose question
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	protected void doAdd(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		String qno=request.getParameter("qno");
+		String qname=request.getParameter("qname");
+		String qanswer=request.getParameter("qanswer");
+		String qexplain=request.getParameter("qexplain");
+		String choices[]=request.getParameterValues("choice");
+		SimpleDateFormat sd = new SimpleDateFormat("yyyyMMdd");
+		
+		QuestionBiz biz = new QuestionBiz();
+		ChoiceBiz chbiz = new ChoiceBiz();
+		
+		try {
+			biz.completeQuestion(qname, qanswer, qexplain, qno);
+			for(int i=0;i<choices.length;i++){
+				String oid="opt"+sd.format(new Date())+"-"+new Date().getTime();
+				Choice ch=new Choice();
+				
+				ch.setOid(oid);
+				ch.setQno(qno);
+				ch.setOname(choices[i]);
+				char a=(char)('A'+i);
+				String ono=String.valueOf(a);
+				
+				ch.setOno(ono);	
+				chbiz.addChoice(ch);
+			}
+			request.setAttribute("msg","Add success Please Go ahead");
+			this.doGetCourse(request, response);
+		} catch (Exception e) {
+			Log.logger.error(e.getMessage());
+			request.setAttribute("msg", "Network error Please call admin!");
+			request.getRequestDispatcher("/error.jsp").forward(request, response);
+		}		
+	}
+	/**
+	 * add other question
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	protected void doAddOther(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		String qno=request.getParameter("qno");
+		String qname=request.getParameter("qname");
+		String qanswer=request.getParameter("qanswer");
+		String qexplain=request.getParameter("qexplain");
+		
+		QuestionBiz biz = new QuestionBiz();
+		
+		try {
+			biz.completeQuestion(qname, qanswer, qexplain, qno);
+			request.setAttribute("msg","Add success Please Go ahead");
+			this.doGetCourse(request, response);
+		} catch (Exception e) {
+			Log.logger.error(e.getMessage());
+			request.setAttribute("msg", "Network error Please call admin!");
+			request.getRequestDispatcher("/error.jsp").forward(request, response);
+		}
+	}
+
+}

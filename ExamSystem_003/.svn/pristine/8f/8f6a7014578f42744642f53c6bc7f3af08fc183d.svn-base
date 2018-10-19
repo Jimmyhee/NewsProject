@@ -1,0 +1,164 @@
+package biz;
+
+import java.util.List;
+
+import dao.CourseDao;
+import dao.CouteaDao;
+import dto.ArrangeInfo;
+import entity.Course;
+import entity.TurnPage;
+import util.Log;
+
+public class CourseBiz {
+	/**
+	 * query course by addition 
+	 * @param cname
+	 * @param tp
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Course> QuerybyCon(String cname, TurnPage tp) throws Exception {
+		Log.logger.info("query -------------- allcourse");
+		
+		List<Course> list=null;
+		CourseDao dao = new CourseDao();		
+		try {
+			list=dao.QuerybyCon(cname,tp);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}			
+		return list;
+	}
+	/**
+	 * delete course 
+	 * @param cno
+	 */
+	public void deleteCourse(String cno) throws Exception{
+		Log.logger.info("delete from courses where cno="+cno);
+		
+		CourseDao cdao = new CourseDao();
+		CouteaDao ctdao = new CouteaDao();
+		try{
+			ctdao.beginTransaction();
+			cdao.setConn(ctdao.getConn());
+			ctdao.deleteCouage(null, cno, null);
+			cdao.deleteCourse(cno);
+			ctdao.commit();
+		}catch (Exception e) {
+			ctdao.rollback();
+			throw e;
+		}finally {
+			ctdao.closeConnection();
+		}
+		
+	}
+	/**
+	 * query course by cno 
+	 * @param cno
+	 * @return
+	 * @throws Exception
+	 */
+	public Course getCourseByUno(String cno) throws Exception{
+		Log.logger.info("query course where cno="+cno);
+		
+		Course course = null;
+		CourseDao cdao = new CourseDao();
+		try{
+			course = cdao.getCourseByUno(cno);	
+		}catch (Exception e) {
+			throw e;
+		}finally {
+			cdao.closeConnection();
+		}
+		return course;
+		
+	}
+	/**
+	 * update course 
+	 * @param cno
+	 * @param cname
+	 * @param cremark
+	 */
+	public void updateCourse(String cno, String cname, String cremark) throws Exception{
+		Log.logger.info("update course  where cno="+cno);
+		
+		CourseDao cdao = new CourseDao();
+		
+		
+		try{
+			cdao.beginTransaction();
+			cdao.updateCourse(cno, cname, cremark);
+			cdao.commit();
+		}catch (Exception e) {
+			cdao.rollback();
+			throw e;
+		}finally {
+			cdao.closeConnection();
+		}
+	}
+	
+	/**
+	 * add course 
+	 * @param course
+	 * @throws Exception
+	 */
+	public void addCourse(Course course) throws Exception {
+		CourseDao dao = new CourseDao();
+		try {
+			dao.addCourse(course);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+	}
+	
+	/**
+	 * all courses
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Course> getAllCourses() throws Exception{
+		CourseDao dao = new CourseDao();
+		List<Course> courses = null;
+		try{
+			courses = dao.getAllCourses();
+		}catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+	
+		return courses;
+	}
+	
+	
+	public  List<ArrangeInfo> getArrInfo(TurnPage tp) throws Exception{
+		List<ArrangeInfo> arrinfos = null;
+		CourseDao dao = new CourseDao();
+		try {
+			arrinfos = dao.getArrInfo(tp);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+		return arrinfos;
+	}
+	//get all Course where  uno = uno ;
+	public List<Course> getAllCourses(String uno) throws Exception {
+		CourseDao dao = new CourseDao();
+		List<Course> courses =null;
+		try {
+			courses = dao.getAllCourses(uno);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+		return courses;
+	}
+
+}

@@ -1,0 +1,9 @@
+package entity;
+
+public interface IQType {
+	public int CHOICEQUESTION =1; //选择题
+	public int BLANKQUESTION =2; //填空题
+	public int SHORTANSWER =3;  //简答题
+	public int JUDGEQUESTION = 4; //判断题
+	public int PROGRAMQUESTION=5;//编程题
+}

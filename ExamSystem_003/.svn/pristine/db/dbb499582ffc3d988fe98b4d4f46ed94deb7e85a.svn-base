@@ -1,0 +1,189 @@
+package dao;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+import entity.Choice;
+import entity.Paper;
+import entity.Question;
+import entity.StuAnswer;
+import entity.TurnPage;
+
+public class PaperDao extends BaseDao{
+
+		public void addPaper(Paper paper) throws Exception{
+			String sql = "insert into tpaper values (?,?,?,?,?)";
+			this.openConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, paper.getPno());
+			ps.setString(2, paper.getPtitle());
+			if(paper.getPtime()!=null){
+				ps.setDate(3,  new java.sql.Date(paper.getPtime().getTime()));
+			}else {
+				ps.setDate(3, null);
+			}
+
+			ps.setDouble(4, paper.getPoint());
+			ps.setInt(5, paper.getAlltime());
+			ps.executeUpdate();
+			ps.close();
+	}
+
+		public void addQues(String pqid, String pno, String qno) throws Exception{
+			String sql = "insert into tpapertques values (?,?,?)";
+			this.openConnection();
+			PreparedStatement ps = this.conn.prepareStatement(sql);
+			ps.setString(1, pqid);
+			ps.setString(2, pno);
+			ps.setString(3, qno);
+			ps.execute();
+			ps.close();
+			
+		}
+
+		/*public List<Paper> getAllPapers() throws Exception{
+			List<Paper> papers = null;
+			String sql ="select * from tpaper";
+			this.openConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ResultSet rs  = ps.executeQuery();
+			papers = new ArrayList<Paper>();
+			while(rs.next()){
+				Paper paper = new Paper();
+				paper.setPno(rs.getString("pno"));
+				paper.setPtitle(rs.getString("ptitle"));
+				paper.setPtime(rs.getDate("ptime"));
+				paper.setPoint(rs.getDouble("point"));
+				paper.setAlltime(rs.getInt("alltime"));
+				papers.add(paper);
+			}
+			rs.close();
+			ps.close();
+			return papers;
+		}*/
+
+		public List<Paper> QuerybyPon(String ptitle, String pno, TurnPage tp) throws Exception {
+			List<Paper> list = new ArrayList<Paper>();
+			String sql = "select * from tpaper";
+			if ((pno == null || pno.equals("")) && (ptitle != null && !ptitle.equals(""))) {
+				sql = sql + " where ptitle like'%" + ptitle + "%'";
+
+			}
+			if ((ptitle == null || ptitle.equals("")) && (pno != null && !pno.equals(""))) {
+				sql = sql + " where pno='" + pno + "'";
+
+			}
+			if (ptitle != null && !ptitle.equals("") && pno != null && !pno.equals("")) {
+				sql = sql + " where ptitle like'%" + ptitle + "%' and pno='" + pno + "'";
+
+			}
+			this.openConnection();
+			tp.allRows=this.getSqlAllRows(sql);		
+			tp.allPages=(tp.allRows-1)/tp.rows+1;
+			if(tp.page>tp.allPages){
+				tp.page=tp.allPages;
+			}
+			int iStart = (tp.page-1)*tp.rows;
+			String newSql=this.getTurnPageSql(sql, iStart, tp.rows);		
+			PreparedStatement ps = this.conn.prepareStatement(newSql);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				Paper paper = new Paper();
+				paper.setPno(rs.getString("pno"));
+				paper.setPtitle(rs.getString("ptitle"));
+				paper.setPtime(rs.getDate("ptime"));
+				paper.setPoint(rs.getDouble("point"));
+				paper.setAlltime(rs.getInt("alltime"));
+				list.add(paper);
+			}
+			ps.close();
+			rs.close();
+			return list;
+		}
+
+		public List<Question> getAllQuestion(String pno) throws Exception{
+			
+			String sql ="select * from tques where qno in (select qno from tpapertques where pno=?)";
+			this.openConnection();
+			PreparedStatement ps = this.conn.prepareStatement(sql);
+			ps.setString(1, pno);
+			ResultSet rs = ps.executeQuery();
+			List<Question> questions = new ArrayList<Question>();
+			while(rs.next()){
+				Question question = new Question();
+				question.setQno(rs.getString("qno"));
+				question.setQname(rs.getString("qname"));
+				question.setQanswer(rs.getString("qanswer"));
+				question.setQexplain(rs.getString("qexplain"));
+				question.setQtype(rs.getInt("qtype"));
+				questions.add(question);
+				
+			}
+			return questions;
+		}
+
+		public void deletePaperQue(String pno) throws Exception{
+			String sql = "delete from tpapertques where pno = ?";
+			this.openConnection();
+			PreparedStatement ps = this.conn.prepareStatement(sql);
+			ps.setString(1, pno);
+			ps.executeUpdate();
+			ps.close();
+		}
+
+		public void deletePaper(String pno) throws Exception{
+
+			String sql = "delete from tpaper where pno=?";
+			this.openConnection();
+			PreparedStatement ps = this.conn.prepareStatement(sql);
+			ps.setString(1, pno);
+			ps.executeUpdate();
+			ps.close();
+		}
+
+		public List<Choice> getAllChoices(String pno) throws Exception{
+			String sql ="select * from tchoice where qno in (select qno from tques where qno in (select qno from tpapertques where pno=?))";
+			
+			this.openConnection();
+			PreparedStatement ps = this.conn.prepareStatement(sql);
+			ps.setString(1, pno);
+			ResultSet rs = ps.executeQuery();
+			List<Choice> choices = new ArrayList<Choice>();
+			while(rs.next()){
+				Choice choice = new Choice();
+				choice.setOid(rs.getString("oid"));
+				choice.setQno(rs.getString("qno"));
+				choice.setOname(rs.getString("oname"));
+				choice.setOno(rs.getString("ono"));
+				choices.add(choice);
+			}
+			
+			return choices;
+		}
+
+		public StuAnswer getStuAnswer(String uno, String pno, String qno) throws Exception{
+			StuAnswer stuanswer =null;
+			String sql = "select * from tanswer where uno=? and pno=? and qno=?";
+			
+			this.openConnection();
+			PreparedStatement ps = this.conn.prepareStatement(sql);
+			
+			ps.setString(1, uno);
+			ps.setString(2, pno);
+			ps.setString(3, qno);
+			ResultSet rs = ps.executeQuery();
+			
+			while(rs.next()){
+				stuanswer = new StuAnswer();
+				stuanswer.setAno(rs.getString("ano"));
+				stuanswer.setPno(rs.getString("pno"));
+				stuanswer.setQno(rs.getString("qno"));
+				stuanswer.setStuanswer(rs.getString("stuanswer"));
+				stuanswer.setUno(rs.getString("uno"));
+			}
+			
+			return stuanswer;
+		}
+}

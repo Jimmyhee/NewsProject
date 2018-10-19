@@ -1,0 +1,144 @@
+package biz;
+
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import dao.KnowledgeDao;
+import dto.Know;
+import entity.Knowledge;
+import entity.TurnPage;
+import util.Log;
+
+
+public class KnowledgeBiz {
+	
+	/**
+	 * get all knowledge points by condition
+	 * @param kname
+	 * @param uno
+	 * @param tp
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Know> QuerybyCon(String kname,String uno,TurnPage tp) throws Exception{
+		Log.logger.info("get all knowledge points by condition");		
+		
+		List<Know> list = null;
+		KnowledgeDao dao = new KnowledgeDao();
+		try {
+			list = dao.QuerybyCon(kname, uno, tp);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+		return list;
+	}
+	
+	
+	/**
+	 * add knowledge point
+	 * @param cno
+	 * @param kname
+	 * @throws Exception
+	 */
+	public void addknow(String cno, String kname) throws Exception{
+		Log.logger.info("add ------knowledge point: "+kname);
+		
+		KnowledgeDao kdao = new KnowledgeDao();
+		try{
+			SimpleDateFormat sd = new SimpleDateFormat("yyyyMMdd");
+			String kno="k"+sd.format(new Date())+"-"+new Date().getTime();
+			kdao.addknow(kno,cno,kname);
+		}catch (Exception e) {
+			throw e;
+		}finally {
+			kdao.closeConnection();
+		}
+		
+	}
+
+	/**
+	 * delete knowledge point
+	 * @param kno
+	 * @throws Exception
+	 */
+	public void deleteKnow(String kno) throws Exception{
+		Log.logger.info("delete knowledge point :"+kno);
+		
+		KnowledgeDao kdao = new KnowledgeDao();
+		try{
+			kdao.deleteKnow(kno);
+		}catch (Exception e) {
+			throw e;
+		}finally {
+			kdao.closeConnection();
+		}
+		
+	}
+
+	/**
+	 * get knowledge point by kno
+	 * @param kno
+	 * @return
+	 * @throws Exception
+	 */
+	public Knowledge getKnowBykno(String kno) throws Exception {
+		Log.logger.info("query knowledge point:"+kno);
+		
+		Knowledge know = null;
+		KnowledgeDao kdao = new KnowledgeDao();
+		try{
+			know = kdao.getKnowBykno(kno);	
+		}catch (Exception e) {
+			throw e;
+		}finally {
+			kdao.closeConnection();
+		}
+		return know;
+	}
+
+	/**
+	 * update knowledge point
+	 * @param kno
+	 * @param kname
+	 * @throws Exception
+	 */
+	public void updateKnow(String kno, String kname) throws Exception{
+		Log.logger.info("update knowledge point");
+		
+		KnowledgeDao kdao = new KnowledgeDao();
+		try{
+			kdao.updateKnow(kno,kname);
+		}catch (Exception e) {
+			throw e;
+		}finally {
+			kdao.closeConnection();
+		}
+		
+	}
+	
+	/**
+	 * get all knowledge points by cno
+	 * @param cno
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Knowledge> getAllknowBycno(String cno) throws Exception {
+		Log.logger.info("get all knowledge points by cno :"+cno);
+		
+		KnowledgeDao kdao = new KnowledgeDao();
+		List<Knowledge> list = null;
+		try {
+			list = kdao.getAllknowBycno(cno);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			kdao.closeConnection();
+		}
+		return list;
+	}
+
+}

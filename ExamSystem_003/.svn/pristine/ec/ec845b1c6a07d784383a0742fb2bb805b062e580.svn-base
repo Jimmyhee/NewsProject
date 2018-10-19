@@ -1,0 +1,133 @@
+package biz;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import dao.ChoiceDao;
+import dao.QuestionDao;
+import entity.Choice;
+import entity.Question;
+import entity.TurnPage;
+
+public class QuestionBiz {
+	public void addQuestion(String qno,int qtype,String kno) throws Exception{
+		QuestionDao dao = new QuestionDao();
+		SimpleDateFormat sd = new SimpleDateFormat("yyyyMMdd");
+		String kqid="q"+sd.format(new Date())+"-"+new Date().getTime();
+		try {		
+			dao.beginTransaction();
+			dao.addQuestion(qno, qtype);
+			dao.addQuesknow(kqid, qno, kno);
+			dao.commit();
+		} catch (Exception e) {
+			dao.rollback();
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+	}
+	
+	
+	public void completeQuestion(String qname,String qanswer,String qexplain,String qno) throws Exception{
+		QuestionDao dao = new QuestionDao();
+		try {
+			dao.completeQuestion(qname, qanswer, qexplain, qno);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+	}
+	
+	
+	public List<Question> QuerybyCon(String qname,String qtype,TurnPage tp) throws Exception{
+		List<Question> list = null;
+		QuestionDao dao = new QuestionDao();
+		try {
+			list = dao.QuerybyCon(qname, qtype, tp);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+		return list;
+	}
+	
+	
+	public void delQuestion(String qno)throws Exception{
+		QuestionDao dao = new QuestionDao();
+		try {
+			dao.beginTransaction();
+			dao.delChoice(qno);
+			dao.delQuesKnow(qno);
+			dao.delQuestion(qno);
+			dao.commit();
+		} catch (Exception e) {
+			dao.rollback();
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+	}
+	
+	public Question queryQuesByqno(String qno)throws Exception{
+		Question question = null;
+		QuestionDao dao = new QuestionDao();
+		try {
+			question = dao.queryQuesByqno(qno);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+		return question;
+	}
+	
+	
+	public List<Choice> queryChoiceByqno(String qno)throws Exception{
+		List<Choice> list = null;
+		QuestionDao dao = new QuestionDao();
+		try {
+			list = dao.queryChoiceByqno(qno);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+		return list;
+	}
+	
+	
+	public void updateChQues(Question question,String []oids,String []onames)throws Exception{
+		QuestionDao dao = new QuestionDao();
+		ChoiceDao cdao = new ChoiceDao();
+		try {
+			dao.beginTransaction();
+			dao.updateQues(question);
+			cdao.setConn(dao.getConn());
+			for(int i=0;i<oids.length;i++){
+				cdao.updateChoice(oids[i],onames[i]);
+			}
+			dao.commit();
+		} catch (Exception e) {
+			dao.rollback();
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+	}
+	
+	
+	public void updateOtherQues(Question question)throws Exception{
+		QuestionDao dao = new QuestionDao();
+		try {
+			dao.updateQues(question);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+	}
+	
+}

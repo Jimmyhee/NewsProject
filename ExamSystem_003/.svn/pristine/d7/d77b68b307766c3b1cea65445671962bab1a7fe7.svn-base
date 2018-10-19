@@ -1,0 +1,21 @@
+package biz;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import dao.ResultDao;
+
+public class ResultBiz {
+	public void addResult(String uno,String pno)throws Exception{
+		ResultDao dao =new ResultDao();
+		SimpleDateFormat sd = new SimpleDateFormat("yyyyMMdd");
+		String said="rslt"+sd.format(new Date())+"-"+new Date().getTime();
+		try {
+			dao.addResult(said, uno, pno);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			dao.closeConnection();
+		}
+	}
+}

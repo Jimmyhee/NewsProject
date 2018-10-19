@@ -1,0 +1,129 @@
+package  com.nepu.dao;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.nepu.entity.Student;
+import com.nepu.entity.TurnPage;
+
+public class StudentDao extends BaseDao{
+
+	/**
+	 * get student information display by page
+	 * @param uno
+	 * @param sname
+	 * @param tp
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Student> QuerybyCon(String uno, String sname, TurnPage tp) throws Exception{
+		List<Student> list = new ArrayList<Student>();
+		String sql = "select * from tstudent";
+		if ((uno == null || uno.equals("")) && (sname != null && !sname.equals(""))) {
+			sql = sql + " where sname like'%" + sname + "%'";
+
+		}
+		if ((sname == null || sname.equals("")) && (uno != null && !uno.equals(""))) {
+			sql = sql + " where uno='" + uno + "'";
+
+		}
+		if (sname != null && !sname.equals("") && uno != null && !uno.equals("")) {
+			sql = sql + " where sname like'%" + sname + "%' and uno='" + uno + "'";
+
+		}
+		this.openConnection();
+		tp.allRows=this.getSqlAllRows(sql);		//锟斤拷取锟斤拷录锟斤拷锟斤拷锟斤拷锟斤拷
+		tp.allPages=(tp.allRows-1)/tp.rows+1;
+		if(tp.page>tp.allPages){
+			tp.page=tp.allPages;
+		}
+		int iStart = (tp.page-1)*tp.rows;
+		String newSql=this.getTurnPageSql(sql, iStart, tp.rows);		//锟斤拷取锟斤拷页锟斤拷sql
+		PreparedStatement ps = this.conn.prepareStatement(newSql);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			Student stu = new Student();
+			stu.setUno(rs.getString("uno"));
+			stu.setSname(rs.getString("sname"));
+			stu.setSphone(rs.getString("sphone"));
+			list.add(stu);
+		}
+		ps.close();
+		rs.close();
+		return list;
+	}
+	/**
+	 * add student
+	 * @throws Exception
+	 */
+	public void addStudent(Student stu) throws Exception {
+		String sql="insert into tstudent values(?,?,?)";
+		this.openConnection();
+		PreparedStatement ps = this.conn.prepareStatement(sql);
+		ps.setString(1,stu.getUno());
+		ps.setString(2,stu.getSname());
+		ps.setString(3,stu.getSphone());
+		ps.executeUpdate();
+		ps.close();
+	}
+
+	/**
+	 *  delete student
+	 * @param uno
+	 * @throws Exception
+	 */
+	public void deleteStudent(String uno)  throws Exception{
+		String sql ="delete from tstudent where uno=?";
+		this.openConnection();
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ps.setString(1, uno);
+		ps.executeUpdate();
+		ps.close();
+		
+	}
+	/**
+	 * get student by uno
+	 * @param uno
+	 * @return
+	 * @throws Exception
+	 */
+	public Student getStudentByUno(String uno) throws Exception{
+		Student student = null;
+		String sql = "select * from tstudent where uno=?";
+		this.openConnection();
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ps.setString(1, uno);
+		ResultSet rs = ps.executeQuery();
+		while(rs.next()){
+			student = new Student();
+			student.setUno(rs.getString("uno"));
+			student.setSname(rs.getString("sname"));
+			student.setSphone(rs.getString("sphone"));		
+		}
+		rs.close();
+		ps.close();
+		return student;
+	}
+	/**
+	 * update student
+	 * @param uno
+	 * @param sname
+	 * @param sphone
+	 * @throws Exception
+	 */
+	public void updateStudent(String uno, String sname, String sphone) throws Exception {
+		
+		String sql="update tstudent set sname=?,sphone=? where uno=?";
+		this.openConnection();
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ps.setString(1, sname);
+		ps.setString(2, sphone);
+		ps.setString(3, uno);
+		ps.executeUpdate();
+		ps.close();
+		
+	}
+
+}

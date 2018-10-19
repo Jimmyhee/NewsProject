@@ -1,0 +1,193 @@
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@page isELIgnored="false"%>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <base href="<%=basePath%>">
+    
+    <title>My JSP 'exam.jsp' starting page</title>
+    
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">    
+	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+	<meta http-equiv="description" content="This is my page">
+	<link href="css/main.css" rel="stylesheet" type="text/css" />
+	<link href="css/iconfont.css" rel="stylesheet" type="text/css" />
+	<link href="css/test.css" rel="stylesheet" type="text/css" />
+	<style>
+	.hasBeenAnswer {
+	background: #831439;
+	color:#fff;
+	}
+	</style>
+
+  </head>
+  
+  <body >
+  <div>
+  <span><font style="font-size: 20px;">${user.uname} 正在考试 请完成${ptitle}试卷</font></span>
+  </div>
+  
+<div class="main">
+	<!--nr start-->
+	<div class="test_main">
+		<div class="nr_left">
+			<div class="test">
+				<form action="" method="post">
+					<div class="test_title">
+						<p class="test_time">
+							<i class="icon iconfont">&#xe6fb;</i><b class="alt-1">01:40</b>
+						</p>
+						<font><input type="button" name="test_jiaojuan" value="交卷"></font>
+						<input type="hidden" name="pno" value="${pno}">
+						<input type="hidden" name="uno" value="${user.uno}">
+					</div>
+					
+						<div class="test_content">
+							<div class="test_content_title">
+								<h2>考试试题</h2>
+								<p>
+									<span>共</span><i class="content_lit">${fn:length(questions)}</i><span>题
+								</p>
+							</div>
+						</div>
+						
+						<div class="test_content_nr">
+							<ul>
+								<c:forEach var="question" items="${questions}" varStatus="status" >
+									<li id="qu_0_0">
+										<div class="test_content_nr_tt">
+											<i>${status.count}</i><font>${question.qname}
+											<input type="hidden" name="qno" value="${question.qno}">
+										</div>
+	                                    <c:if test="${question.qtype==1}">
+	                                    <div class="test_content_nr_main">
+											<ul>
+												<c:forEach var="choice" items="${choices}">
+													<c:if test="${choice.qno==question.qno}">
+														<li class="option">
+															<input type="radio" class="radioOrCheck" name="stuanswer" value="${choice.ono}"/>
+															<label for="0_answer_1_option_1">
+															<p class="ue" style="display: inline;">${choice.oname}</p>
+															</label>
+														</li>
+													</c:if>												
+												</c:forEach> 
+											</ul>
+										</div>
+										</c:if> 																												 	
+	                                    <c:if test="${question.qtype==4}">
+	                                    	<li class="option">
+											<input type="radio" class="radioOrCheck" name="stuanswer" value="T" style="margin-left: 68px"/>
+											<label for="0_answer_1_option_1">
+											<p class="ue" style="display: inline;">T</p>
+											</label>
+	                                     	<input type="radio" class="radioOrCheck" name="stuanswer" value="F" style="margin-left: 68px"/>
+											<label for="0_answer_1_option_1">
+											<p class="ue" style="display: inline;">F</p>
+											</label>
+											</li>	                                       
+	                                     	
+	                                    </c:if>
+	                                    <c:if test="${question.qtype!=4 && question.qtype!=1}">	
+	                                    	<textarea name="stuanswer" rows="" cols="" style="width: 700px; height: 100px;margin-left:85px; margin-top: 10px;margin-bottom: 40px;"></textarea> 											
+										</c:if>
+									</li>
+								</c:forEach>
+							</ul>
+						</div>												 					
+				</form>
+			</div>
+			</div>
+			</div>
+		<!-- <div class="nr_right">
+			<div class="nr_rt_main">
+				<div class="rt_nr1">
+					<div class="rt_nr1_title">
+						<h1>
+							<i class="icon iconfont">&#xe692;</i>答题卡
+						</h1>
+						<p class="test_time">
+							<i class="icon iconfont">&#xe6fb;</i><b class="alt-1">01:40</b>
+						</p>
+					</div>
+					
+						<div class="rt_content">
+							<div class="rt_content_tt">
+								<h2>单选题</h2>
+								<p>
+									<span>共</span><i class="content_lit">60</i><span>题</span>
+								</p>
+							</div>
+							<div class="rt_content_nr answerSheet">
+								<ul>
+									
+										<li><a href="#qu_0_0">1</a></li>
+									
+										<li><a href="#qu_0_1">2</a></li>
+									
+										<li><a href="#qu_0_2">3</a></li>
+									
+										<li><a href="#qu_0_3">4</a></li>
+									
+										<li><a href="#qu_0_4">5</a></li>
+									
+										<li><a href="#qu_0_5">6</a></li>
+									
+								</ul>
+							</div>
+						
+							
+							
+					</div>	
+						
+				</div>
+			</div>
+		</div>
+	</div> -->
+
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/jquery.easy-pie-chart.js"></script>
+<!--时间js-->
+<script src="js/jquery.countdown.js"></script>
+<script>
+	window.jQuery(function($) {
+		"use strict";
+		
+		$('time').countDown({
+			with_separators : false
+		});
+		$('.alt-1').countDown({
+			css_class : 'countdown-alt-1'
+		});
+		$('.alt-2').countDown({
+			css_class : 'countdown-alt-2'
+		});
+		
+	});
+	
+	
+	$(function() {
+		$('li.option label').click(function() {
+		debugger;
+			var examId = $(this).closest('.test_content_nr_main').closest('li').attr('id'); // 得到题目ID
+			var cardLi = $('a[href=#' + examId + ']'); // 根据题目ID找到对应答题卡
+			// 设置已答题
+			if(!cardLi.hasClass('hasBeenAnswer')){
+				cardLi.addClass('hasBeenAnswer');
+			}
+			
+		});
+	});
+</script>
+
+</body>
+</html>

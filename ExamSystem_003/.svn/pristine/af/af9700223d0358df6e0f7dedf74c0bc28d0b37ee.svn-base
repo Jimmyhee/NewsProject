@@ -1,0 +1,135 @@
+package  biz;
+
+import java.util.List;
+
+import  dao.StudentDao;
+import  dao.UserDao;
+import  entity.IRole;
+import  entity.Student;
+import  entity.TurnPage;
+import  entity.User;
+import  util.Log;
+
+public class StudentBiz {
+	/**
+	 * query student by addition
+	 * @param uno
+	 * @param sname
+	 * @param tp
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Student> QuerybyCon(String uno, String sname, TurnPage tp) throws Exception {
+		Log.logger.info("query -------------- allstudent");
+		
+		List<Student> list=null;
+		StudentDao sdao = new StudentDao();
+		try {
+
+			list=sdao.QuerybyCon(uno, sname,tp);
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			sdao.closeConnection();
+		}			
+		return list;
+	}
+	/**
+	 * add student 
+	 * @throws Exception
+	 */
+	public void addStudent(Student student)throws Exception{
+		StudentDao dao = new StudentDao();
+		UserDao udao = new UserDao();
+		User user = new User();
+		user.setUno(student.getUno());
+		user.setUname(student.getSname());
+		user.setPwd("123456");
+		user.setRole(IRole.STUDENT);
+		try{
+			udao.beginTransaction();
+			udao.addUser(user);
+			dao.setConn(udao.getConn());
+			dao.addStudent(student);
+			udao.commit();
+		}catch (Exception e) {
+			udao.rollback();
+			throw e;			
+		}finally {
+			udao.closeConnection();
+		}
+	}
+	/**
+	 * delete student 
+	 * @param uno
+	 * @throws Exception
+	 */
+	public void deleteStudent(String uno) throws Exception {
+		Log.logger.info("delete from teacher where uno="+uno);
+		
+		StudentDao sdao = new StudentDao();
+		UserDao udao = new UserDao();
+		try{
+			sdao.beginTransaction();
+			sdao.deleteStudent(uno);
+			udao.setConn(sdao.getConn());
+			udao.deleteUser(uno);
+			sdao.commit();
+		}catch (Exception e) {
+			sdao.rollback();
+			throw e;
+		}finally {
+			sdao.closeConnection();
+		}
+		
+	}
+	
+	/**
+	 * query student by uno 
+	 * @param uno
+	 * @return
+	 * @throws Exception
+	 */
+	public Student getStudentByUno(String uno)  throws Exception{
+		
+		Log.logger.info("query student where uno="+uno);
+		
+		Student student = null;
+		StudentDao sdao = new StudentDao();
+		try{
+			student = sdao.getStudentByUno(uno);	
+		}catch (Exception e) {
+			throw e;
+		}finally {
+			sdao.closeConnection();
+		}
+		return student;
+	}
+	/**
+	 * update student 
+	 * @param uno
+	 * @param sname
+	 * @param sphone
+	 * @throws Exception 
+	 */
+	public void updateStduent(String uno, String sname, String sphone) throws Exception {
+		Log.logger.info("update student  where uno="+uno);
+		
+		StudentDao sdao = new StudentDao();
+		UserDao udao = new UserDao();
+		
+		try{
+			sdao.beginTransaction();
+			sdao.updateStudent(uno, sname, sphone);
+			udao.setConn(sdao.getConn());
+			udao.updateUser(uno,sname);
+			sdao.commit();
+		}catch (Exception e) {
+			sdao.rollback();
+			throw e;
+		}finally {
+			sdao.closeConnection();
+		}
+	}
+
+}
